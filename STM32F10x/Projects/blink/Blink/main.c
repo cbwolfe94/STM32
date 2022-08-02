@@ -2,6 +2,8 @@
 #include <stm32f10x_rcc.h>
 #include <stm32f10x_gpio.h>
 
+static __IO uint32_t timing_delay;
+
 void delay(uint32_t n_delay);
 
 int main(void)
@@ -13,7 +15,7 @@ int main(void)
     //Initialize default GPIO struct
     GPIO_StructInit(&GPIO_InitStructure);
 
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
 
@@ -23,19 +25,23 @@ int main(void)
         while(1);
     }
 
-    
     //Superloop
     while (1) {
-        static int led_val = 0;
-        GPIO_WriteBit(GPIOC, GPIO_Pin_9, (led_val) ? Bit_SET : Bit_RESET);
-        led_val = 1 - led_val;
-        delay(1000);
+        //static int led_val = 0;
+        //GPIO_WriteBit(GPIOC, GPIO_Pin_8, (led_val) ? Bit_SET : Bit_RESET);
+        //GPIO_WriteBit(GPIOC, GPIO_Pin_9, (led_val) ? Bit_SET : Bit_RESET);
+
+        GPIO_Write(GPIOC, GPIO_Pin_8 | GPIO_Pin_9);
+        
+        //led_val = 1 - led_val;
+        delay(2000);
+
+        GPIO_Write(GPIOC, GPIO_Pin_8 & GPIO_Pin_9);
+        delay(2000);
     }
 
     return 0;
 }
-
-static __IO uint32_t timing_delay;
 
 void delay(uint32_t n_time)
 {
